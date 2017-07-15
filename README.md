@@ -2,7 +2,8 @@
 
 Hello! This is a **tiny** Calculator app to learn Swift and iOS app dev.
 
-![Week1](screenshots/Calculator1.1.PNG "Calculator App")
+<img src="screenshots/Calculator1.1.PNG" alt="Calculator" style="width: 200px;"/>
+
 
 
 
