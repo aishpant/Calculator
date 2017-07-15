@@ -25,7 +25,7 @@ class ViewController: UIViewController {
             let textCurrentlyInDisplay = display.text!
             switch digit {
             case decimalMark:
-                if !textCurrentlyInDisplay.contains(".") {
+                if !textCurrentlyInDisplay.contains(decimalMark) {
                     fallthrough
                 }
             default:
@@ -44,7 +44,7 @@ class ViewController: UIViewController {
             return Double(display.text!)!
         }
         set {
-            display.text = String(newValue)
+            display.text = newValue.formatted
         }
     }
     
@@ -56,8 +56,8 @@ class ViewController: UIViewController {
             brain.setOperand(displayValue)
             userIsTyping = false
         }
-        if let mathematicalSymbol = sender.currentTitle {
-            brain.performOperation(mathematicalSymbol)
+        if let symbol = sender.currentTitle {
+            brain.performOperation(symbol)
         }
         if let result = brain.result.value {
             displayValue = result

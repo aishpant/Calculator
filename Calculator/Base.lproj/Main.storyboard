@@ -306,7 +306,7 @@
                                                         <rect key="frame" x="174" y="0.0" width="56" height="62.5"/>
                                                         <color key="backgroundColor" red="0.81184895830000003" green="0.82530381939999997" blue="0.89564344620000003" alpha="1" colorSpace="calibratedRGB"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                                        <state key="normal" title="cos">
+                                                        <state key="normal" title="?">
                                                             <color key="titleShadowColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                         </state>
                                                         <connections>
@@ -366,7 +366,7 @@
                                                         <rect key="frame" x="174" y="0.0" width="56" height="62.5"/>
                                                         <color key="backgroundColor" red="0.81184895830000003" green="0.82530381939999997" blue="0.89564344620000003" alpha="1" colorSpace="calibratedRGB"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                                        <state key="normal" title="sin">
+                                                        <state key="normal" title="&lt;">
                                                             <color key="titleShadowColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                         </state>
                                                         <connections>
@@ -407,7 +407,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-773" y="-724"/>
+            <point key="canvasLocation" x="-681" y="-774"/>
         </scene>
     </scenes>
     <color key="tintColor" red="0.84799525259999997" green="0.75842985190000001" blue="0.96460336540000002" alpha="1" colorSpace="calibratedRGB"/>
