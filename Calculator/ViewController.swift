@@ -39,9 +39,43 @@ class ViewController: UIViewController {
         
     }
     
+    private var variables: [String: Double]?
+    
+    @IBAction func addVariable(_ sender: UIButton) {
+        brain.setOperand(variable: "M")
+        evaluate()
+    }
+    
+    
+    @IBAction func evaluateWithMemory(_ sender: UIButton) {
+        
+        if variables != nil {
+            variables!["M"] = displayValue
+        } else {
+            variables = ["M" : displayValue]
+        }
+        userIsTyping = false
+        evaluate()
+    }
+    
+    @IBAction func clear(_ sender: UIButton) {
+        brain.clear()
+        displayValue = 0
+        evaluate()
+    }
+    
+    @IBAction func undo(_ sender: UIButton) {
+        if userIsTyping {
+            displayValue = Double(String(displayValue.formatted.dropLast())) ?? 0
+        } else {
+            brain.undo()
+        }
+        evaluate()
+    }
+    
     var displayValue: Double {
         get {
-            return Double(display.text!)!
+            return Double.fourFractionDigits.number(from: display.text!)?.doubleValue ?? 0
         }
         set {
             display.text = newValue.formatted
@@ -59,21 +93,23 @@ class ViewController: UIViewController {
         if let symbol = sender.currentTitle {
             brain.performOperation(symbol)
         }
-        if let result = brain.result.value {
+        evaluate()
+    }
+    
+    private func evaluate() {
+        
+        if displayValue.formatted == "0" {
+            userIsTyping = false
+        }
+        
+        let result = brain.evaluate(using: variables)
+        if let result = result.value {
             displayValue = result
         }
-        else if !brain.resultIsPending {
-            displayValue = 0
-        }
-        operationSequence.text = brain.result.description ?? " "
         
-        if brain.resultIsPending {
-            operationSequence.text = operationSequence.text!.appending("...")
-        }
-        else if brain.result.description != nil {
-            operationSequence.text = operationSequence.text!.appending("=")
-        }
-        
+        operationSequence.text = result.description
+        operationSequence.text = result.isPending ? operationSequence.text!.appending("...")
+            : operationSequence.text!.appending("=")
     }
 }
 
