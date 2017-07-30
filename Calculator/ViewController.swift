@@ -49,7 +49,7 @@ class ViewController: UIViewController {
     }
     
     
-    @IBAction func evaluateWithMemory(_ sender: CalculatorButton) {
+    @IBAction func evaluateWithVariable(_ sender: CalculatorButton) {
         
         if variables != nil {
             variables!["M"] = displayValue
@@ -98,7 +98,7 @@ class ViewController: UIViewController {
             userIsTyping = false
         }
         if let symbol = sender.currentTitle {
-            brain.performOperation(symbol)
+            brain.setOperator(symbol)
         }
         evaluate()
     }

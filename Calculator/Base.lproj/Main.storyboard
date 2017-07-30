@@ -103,7 +103,7 @@
                                                             <color key="titleShadowColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                         </state>
                                                         <connections>
-                                                            <action selector="evaluateWithMemory:" destination="BYZ-38-t0r" eventType="touchUpInside" id="jRz-i8-GGw"/>
+                                                            <action selector="evaluateWithVariable" destination="BYZ-38-t0r" eventType="touchUpInside" id="jRz-i8-GGw"/>
                                                         </connections>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xrj-Ri-zaS" customClass="CalculatorButton" customModule="Calculator" customModuleProvider="target">

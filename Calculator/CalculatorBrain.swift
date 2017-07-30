@@ -19,14 +19,33 @@ struct CalculatorBrain {
     }
     
     mutating func setOperand(_ operand: Double) {
+        resetIfNewExpression()
         expression.append(Element.operand(operand))
     }
     
+    private mutating func resetIfNewExpression() {
+        if let lastElement = expression.last {
+            switch lastElement {
+            case .operatorSymbol(let symbol):
+                if let operation = operations[symbol] {
+                    switch operation {
+                    case .equals: fallthrough
+                    case .unaryOperation( _,  _):
+                        clear()
+                    default: break
+                    }
+                }
+            default: break
+            }
+        }
+    }
+    
     mutating func setOperand(variable named: String) {
+        resetIfNewExpression()
         expression.append(Element.variable(named))
     }
     
-    mutating func performOperation(_ symbol: String) {
+    mutating func setOperator(_ symbol: String) {
         expression.append(Element.operatorSymbol(symbol))
     }
     
@@ -40,38 +59,37 @@ struct CalculatorBrain {
         expression.removeAll(keepingCapacity: true)
     }
     
+    enum Operation {
+        case constant(value: Double, description: String)
+        case unaryOperation((Double) -> Double, (String) -> String)
+        case binaryOperation((Double, Double) -> Double)
+        case random(() -> Double, description: String)
+        case equals
+    }
+    
+    var operations: [String: Operation] = [
+        "π" : Operation.constant(value: Double.pi, description: "π"),
+        "e" : Operation.constant(value: M_E, description: "e"),
+        "rand" : Operation.random({Double(arc4random()) / Double(UINT32_MAX)},
+                                  description: "rand()"),
+        "=" : Operation.equals,
+        "√" : Operation.unaryOperation(sqrt, { "√(" +  $0 + ")" }),
+        "cos" : Operation.unaryOperation(cos, { "cos(" + $0 + ")" }),
+        "sin" : Operation.unaryOperation(sin, { "sin(" + $0 + ")" }),
+        "log" : Operation.unaryOperation(log, { "log(" + $0 + ")" }),
+        "x²" : Operation.unaryOperation({ pow($0, 2)}, { "(" + $0 + ")²" }),
+        "±" : Operation.unaryOperation({ -$0 }, { "±(" + $0 + ")" }),
+        "x" : Operation.binaryOperation({ $0 * $1 }),
+        "÷" : Operation.binaryOperation({ $0 / $1 }),
+        "%" : Operation.binaryOperation({ Double(Int($0) % Int($1)) }),
+        "+" : Operation.binaryOperation({ $0 + $1 }),
+        "-" : Operation.binaryOperation({ $0 - $1 }),
+        ]
+    
     func evaluate(using variables: Dictionary<String,Double>? = nil)
         -> (value: Double?, isPending: Bool, description: String) {
             
-            enum Operation {
-                case constant(value: Double, description: String)
-                case unaryOperation((Double) -> Double, (String) -> String)
-                case binaryOperation((Double, Double) -> Double)
-                case random(() -> Double, description: String)
-                case equals
-            }
-            
-            var operations: [String: Operation] = [
-                "π" : Operation.constant(value: Double.pi, description: "π"),
-                "e" : Operation.constant(value: M_E, description: "e"),
-                "rand" : Operation.random({Double(arc4random()) / Double(UINT32_MAX)},
-                                          description: "rand()"),
-                "=" : Operation.equals,
-                "√" : Operation.unaryOperation(sqrt, { "√(" +  $0 + ")" }),
-                "cos" : Operation.unaryOperation(cos, { "cos(" + $0 + ")" }),
-                "sin" : Operation.unaryOperation(sin, { "sin(" + $0 + ")" }),
-                "log" : Operation.unaryOperation(log, { "log(" + $0 + ")" }),
-                "x²" : Operation.unaryOperation({ pow($0, 2)}, { "(" + $0 + ")²" }),
-                "±" : Operation.unaryOperation({ -$0 }, { "±(" + $0 + ")" }),
-                "x" : Operation.binaryOperation({ $0 * $1 }),
-                "÷" : Operation.binaryOperation({ $0 / $1 }),
-                "%" : Operation.binaryOperation({ Double(Int($0) % Int($1)) }),
-                "+" : Operation.binaryOperation({ $0 + $1 }),
-                "-" : Operation.binaryOperation({ $0 - $1 }),
-                ]
-            
             var accumulator: (value: Double?, description: String) = (nil, " ")
-            
             var pendingBinaryOperation: PendingBinaryOperation?
             
             func performOperation(_ symbol: String) {
