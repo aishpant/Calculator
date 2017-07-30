@@ -14,7 +14,7 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var operationSequence: UILabel!
     
-    @IBOutlet weak var clearButton: UIButton!
+    @IBOutlet weak var memoryValue: UILabel!
     
     var userIsTyping: Bool = false
     
@@ -43,28 +43,49 @@ class ViewController: UIViewController {
     
     private var variables: [String: Double]?
     
+    private var variableName: String?
+    
     @IBAction func addVariable(_ sender: CalculatorButton) {
-        brain.setOperand(variable: "M")
-        evaluate()
+        if let name = sender.currentTitle {
+            variableName = name
+            brain.setOperand(variable: name)
+            evaluate()
+        }
     }
     
-    
-    @IBAction func evaluateWithVariable(_ sender: CalculatorButton) {
-        
-        if variables != nil {
-            variables!["M"] = displayValue
-        } else {
-            variables = ["M" : displayValue]
+    @IBAction func evaluateWithVariable(_ sender: UIButton) {
+        if variableName != nil {
+            if variables != nil {
+                variables![variableName!] = displayValue
+            } else {
+                variables = [variableName! : displayValue]
+            }
+            
+            var title = memoryValue.text!
+            if title.count == 2 {
+                memoryValue.text = title.appending(displayValue.formatted)
+            } else {
+                let range = title.index(title.endIndex, offsetBy: -(title.count - 2))..<title.endIndex
+                title.removeSubrange(range)
+                title.append(contentsOf: displayValue.formatted)
+                memoryValue.text = title
+            }
+            
+            userIsTyping = false
+            evaluate()
         }
-        userIsTyping = false
-        evaluate()
     }
     
     @IBAction func clear(_ sender: CalculatorButton) {
         brain.clear()
         displayValue = 0
         userIsTyping = false
+        variables = nil
         evaluate()
+        var memory = memoryValue.text!
+        let range = memory.index(memory.endIndex, offsetBy: -(memory.count - 2))..<memory.endIndex
+        memory.removeSubrange(range)
+        memoryValue.text = memory
     }
     
     @IBAction func undo(_ sender: CalculatorButton) {
@@ -103,9 +124,9 @@ class ViewController: UIViewController {
         evaluate()
     }
     
-    private func evaluate() {
+    private func evaluate(using variables: Dictionary<String,Double>? = nil) {
         
-        let result = brain.evaluate(using: variables)
+        let result = brain.evaluate(using: variables ?? self.variables)
         if let result = result.value {
             displayValue = result
         }
@@ -115,6 +136,6 @@ class ViewController: UIViewController {
             : operationSequence.text!.appending("=")
     }
     
-
+    
 }
 
