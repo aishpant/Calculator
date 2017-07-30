@@ -14,9 +14,11 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var operationSequence: UILabel!
     
+    @IBOutlet weak var clearButton: UIButton!
+    
     var userIsTyping: Bool = false
     
-    @IBAction func touchDigit(_ sender: UIButton) {
+    @IBAction func touchDigit(_ sender: CalculatorButton) {
         
         let digit = sender.currentTitle!
         let decimalMark = "."
@@ -41,13 +43,13 @@ class ViewController: UIViewController {
     
     private var variables: [String: Double]?
     
-    @IBAction func addVariable(_ sender: UIButton) {
+    @IBAction func addVariable(_ sender: CalculatorButton) {
         brain.setOperand(variable: "M")
         evaluate()
     }
     
     
-    @IBAction func evaluateWithMemory(_ sender: UIButton) {
+    @IBAction func evaluateWithMemory(_ sender: CalculatorButton) {
         
         if variables != nil {
             variables!["M"] = displayValue
@@ -58,19 +60,24 @@ class ViewController: UIViewController {
         evaluate()
     }
     
-    @IBAction func clear(_ sender: UIButton) {
+    @IBAction func clear(_ sender: CalculatorButton) {
         brain.clear()
         displayValue = 0
+        userIsTyping = false
         evaluate()
     }
     
-    @IBAction func undo(_ sender: UIButton) {
+    @IBAction func undo(_ sender: CalculatorButton) {
         if userIsTyping {
             displayValue = Double(String(displayValue.formatted.dropLast())) ?? 0
+            if displayValue.formatted == "0" {
+                userIsTyping = false
+            }
         } else {
             brain.undo()
+            evaluate()
         }
-        evaluate()
+        
     }
     
     var displayValue: Double {
@@ -84,7 +91,7 @@ class ViewController: UIViewController {
     
     private var brain = CalculatorBrain()
     
-    @IBAction func performOperation(_ sender: UIButton) {
+    @IBAction func performOperation(_ sender: CalculatorButton) {
         
         if userIsTyping {
             brain.setOperand(displayValue)
@@ -98,10 +105,6 @@ class ViewController: UIViewController {
     
     private func evaluate() {
         
-        if displayValue.formatted == "0" {
-            userIsTyping = false
-        }
-        
         let result = brain.evaluate(using: variables)
         if let result = result.value {
             displayValue = result
@@ -111,5 +114,7 @@ class ViewController: UIViewController {
         operationSequence.text = result.isPending ? operationSequence.text!.appending("...")
             : operationSequence.text!.appending("=")
     }
+    
+
 }
 
